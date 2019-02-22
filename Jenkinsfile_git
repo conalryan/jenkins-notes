@@ -1,0 +1,174 @@
+// ACS
+def git_acs_branch = ''
+def git_acs_branch_sh = ''
+
+def git_acs_log = ''
+def git_acs_log_sh = ''
+
+def git_acs_commit = ''
+def git_acs_commit_sh = ''
+
+def git_acs_version = ''
+
+// UI
+def git_ui_branch = ''
+def git_ui_branch_sh = ''
+
+def git_ui_log = ''
+def git_ui_log_sh = ''
+
+def git_ui_commit = ''
+def git_ui_commit_sh = ''
+
+def git_ui_version = ''
+
+// Server
+def git_server_branch = ''
+def git_server_branch_sh = ''
+
+def git_server_log = ''
+def git_server_log_sh = ''
+
+def git_server_commit = ''
+def git_server_commit_sh = ''
+
+def git_server_version = ''
+
+def three_arg_script = ''
+def version = ''
+
+pipeline {
+  agent any
+  environment {
+    SONARQUBE = credentials('sonarqube')
+    APP_TOKEN = credentials('app-token')
+    APP_ARTIFACTORY = credentials('app-rndsta-hcc2-artifactory')
+  }
+  parameters {
+    choice(name: 'RELEASE', choices: ['6.1', '6.2', '7.0'], description: 'The Release to build')
+    string(name: 'PATCH', defaultValue: '2', description: 'PATCH version for release')
+  }
+  stages {
+    stage('Env') {
+      steps {
+        // Environment
+        sh 'pwd'
+        echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+        echo "CHANGE_ID: ${env.CHANGE_ID}"
+        echo "BUILD_NUMBER: ${env.BUILD_NUMBER}"
+        echo "BUILD_ID: ${env.BUILD_ID}"
+        echo "BUILD_TAG: ${env.BUILD_TAG}"
+        echo "WORKSPACE: ${env.WORKSPACE}"
+        echo "GIT_COMMIT: ${env.GIT_COMMIT}"
+        echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+        // ACS Version
+        script {
+          // Branch
+          git_acs_branch = sh(returnStdout: true, script: "git branch | sed -n '/\\* /s///p'")
+          sh "echo ${git_acs_branch}"
+          git_acs_branch_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_branch.sh")
+          sh "echo ${git_acs_branch_sh}"
+          // Log
+          // git_acs_log = sh(returnStdout: true, script: "git log -1 --oneline")
+          // sh "echo ${git_acs_log}"
+          // git_acs_log_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_log.sh")
+          // sh "echo ${git_acs_log_sh}"
+          // Commit
+          git_acs_commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+          sh "echo ${git_acs_commit}"
+          git_acs_commit_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_commit.sh")
+          sh "echo ${git_acs_commit_sh}"
+          // Version
+          git_acs_version = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/version.sh ${params.RELEASE}")
+          sh "echo ${git_acs_version}"
+        }
+      }
+    }
+    stage('UI') {
+      steps {
+        checkout([
+          $class: 'GitSCM', 
+          branches: [[name: "release/${params.RELEASE}.x"]], 
+          browser: [$class: 'BitbucketWeb', repoUrl: 'https://mycompany.com/git/projects/repos/myapp/browse'], 
+          doGenerateSubmoduleConfigurations: false, 
+          extensions: [
+            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'myapp-ui'],
+            [$class: 'LocalBranch', localBranch: "release/${params.RELEASE}.x"]
+          ], 
+          submoduleCfg: [], 
+          userRemoteConfigs: [[credentialsId: 'some-user', url: 'https://mycompany/git/myapp-ui.git']]
+        ])
+        dir('ahp-call-center-ui') {
+          // Version
+          script {
+            // Branch
+            git_ui_branch = sh(returnStdout: true, script: "git branch | sed -n '/\\* /s///p'")
+            sh "echo ${git_ui_branch}"
+            git_ui_branch_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_branch.sh")
+            sh "echo ${git_ui_branch_sh}"
+            // Log
+            // git_ui_log = sh(returnStdout: true, script: "git log -1 --oneline")
+            // sh "echo ${git_ui_log}"
+            // git_ui_log_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_log.sh")
+            // sh "echo ${git_ui_log_sh}"
+            git_ui_commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+            sh "echo ${git_ui_commit}"
+            git_ui_commit_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_commit.sh")
+            sh "echo ${git_ui_commit_sh}"
+            // Version
+            git_ui_version = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/version.sh ${params.RELEASE}")
+            sh "echo ${git_ui_version}"
+          }
+        }
+      }
+    }
+    stage('Server') {
+      steps {
+        checkout([
+          $class: 'GitSCM', 
+          branches: [[name: "release/${params.RELEASE}.x"]], 
+          browser: [$class: 'BitbucketWeb', repoUrl: 'https://mycompany.com/git/projects/repos/myapp-server/browse'], 
+          doGenerateSubmoduleConfigurations: false, 
+          extensions: [
+            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'myapp-server'], 
+            [$class: 'LocalBranch', localBranch: "release/${params.RELEASE}.x"]
+          ], 
+          submoduleCfg: [], 
+          userRemoteConfigs: [[credentialsId: 'some-user', url: 'https://mycompany.com/git/myapp-server.git']]
+        ])
+        dir('myapp-server') {
+          script {
+            // Branch
+            git_server_branch = sh(returnStdout: true, script: "git branch | sed -n '/\\* /s///p'")
+            sh "echo ${git_server_branch}"
+            git_server_branch_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_branch.sh")
+            sh "echo ${git_server_branch_sh}"
+            // Log
+            // git_server_log = sh(returnStdout: true, script: "git log -1 --oneline")
+            // sh "echo ${git_server_log}"
+            // git_server_log_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_log.sh")
+            // sh "echo ${git_server_log_sh}"
+            // Commit
+            git_server_commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+            sh "echo ${git_server_commit}"
+            git_server_commit_sh = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/git_commit.sh")
+            sh "echo ${git_server_commit_sh}"
+            // Version
+            git_server_version = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/version.sh ${params.RELEASE}")
+            sh "echo ${git_server_version}"
+            two_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/two_arg_script.sh ${params.RELEASE} ${git_server_version}")
+            sh "echo ${two_arg_script}"
+            sh "echo VERSIONS ARE:"
+            sh "echo UI: ${git_ui_version}"
+            sh "echo server: ${git_server_version}"
+            sh "echo acs: ${git_acs_version}"
+            three_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/three_arg_script.sh \"${git_ui_version}\" \"${git_server_version}\" \"${git_acs_version}\"")
+            sh "echo ${three_arg_script}"
+            version = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/bump_version.sh \"${git_ui_version}\" \"${git_server_version}\" \"${git_acs_version}\"")
+            sh "echo ${version}"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+def zero_arg_script = ''
+def one_arg_script = ''
+def two_arg_script = ''
+
+def git_acs_commit = ''
+def git_acs_version = ''
+
+def git_ui_commit = ''
+def git_ui_version = ''
+
+def git_server_commit = ''
+def git_server_version = ''
+
+def version = ''
+
+pipeline {
+  agent any
+  environment {
+    SONARQUBE = credentials('sonarqube')
+    APP_TOKEN = credentials('some-user-token')
+    APP_ARTIFACTORY = credentials('some-user-artifactory')
+  }
+  parameters {
+    choice(name: 'RELEASE', choices: ['5.0', '6.1', '6.2', '7.0'], description: 'The Release to build')
+    string(name: 'PATCH', description: 'PATCH version for release')
+  }
+  stages {
+    stage('Env') {
+      steps {
+        // Environment
+        sh 'pwd'
+        echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+        echo "CHANGE_ID: ${env.CHANGE_ID}"
+        echo "BUILD_NUMBER: ${env.BUILD_NUMBER}"
+        echo "BUILD_ID: ${env.BUILD_ID}"
+        echo "BUILD_TAG: ${env.BUILD_TAG}"
+        echo "WORKSPACE: ${env.WORKSPACE}"
+        echo "GIT_COMMIT: ${env.GIT_COMMIT}"
+        echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+        // ACS Version
+        script {
+          git_acs_commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+          sh "echo ${git_acs_commit}"
+          git_acs_version = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/version.sh ${params.RELEASE}")
+          sh "echo ${git_acs_version}"
+        }
+      }
+    }
+    stage('Script') {
+      steps {
+        script {
+          zero_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/zero_arg_script.sh")
+          sh "echo ${zero_arg_script}"
+          one_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/one_arg_script.sh ${params.RELEASE}")
+          sh "echo ${one_arg_script}"
+          two_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/two_arg_script.sh ${params.RELEASE} ${params.PATCH}")
+          sh "echo ${two_arg_script}"
+        }
+      }      
+    }
+    stage('Server') {
+      steps {
+        checkout([
+          $class: 'GitSCM', 
+          branches: [[name: "release/${params.RELEASE}.x"]], 
+          browser: [$class: 'BitbucketWeb', repoUrl: 'https://mycompany.com/git/projects/repos/myapp/browse'], 
+          doGenerateSubmoduleConfigurations: false, 
+          extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'myapp']], 
+          submoduleCfg: [], 
+          userRemoteConfigs: [[credentialsId: 'some-user', url: 'https://mycompany.com/git/scm/myapp.git']]
+        ])
+        dir('myapp') {
+          script {
+            zero_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/zero_arg_script.sh")
+            sh "echo ${zero_arg_script}"
+            one_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/one_arg_script.sh ${params.RELEASE}")
+            sh "echo ${one_arg_script}"
+            two_arg_script = sh(returnStdout: true, script: "${env.WORKSPACE}/scripts/two_arg_script.sh ${params.RELEASE} ${params.PATCH}")
+            sh "echo ${two_arg_script}"
+            git_server_commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+            sh "echo ${git_server_commit}"
+            sh "cp ${env.WORKSPACE}/scripts/version.sh ./"
+            git_server_version = sh(returnStdout: true, script: "./version.sh ${params.RELEASE}")
+            sh "echo ${git_server_version}"
+          }
+        }
+      }
+    }
+    stage('Clean up') {
+      steps {
+        // Remove dirs
+        sh 'rm -rf myapp'
+        sh 'rm -rf myapp\\@tmp/'
+      }
+    }
+  }
+}
