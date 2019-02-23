@@ -8,10 +8,10 @@ docker run \
   --rm \
   -u root \
   -p 8080:8080 \
-  --name jenkins-tutorials \
-  -v jenkins-data:/var/jenkins_home \ 
+  -v jenkins-data:/var/jenkins_home \
+  -v $(which docker):/usr/bin/docker \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -v "$HOME":/home \ 
+  -v "$HOME":/home \
   jenkinsci/blueocean
 ```
 Note:
@@ -89,6 +89,7 @@ pipeline {
 - As a general principle, it’s a good idea to keep your Pipeline code (i.e. the Jenkinsfile) as tidy as possible and place more complex build steps (particularly for stages consisting of 2 or more steps) into separate shell script files like the deliver.sh file. This ultimately makes maintaining your Pipeline code easier, especially if your Pipeline gains more complexity.
 
 # Run Jenkins
+http://localhost:8080/blue/organizations/jenkins/simple-java-maven-app/activity
 Go back to Jenkins again, log in again if necessary and ensure you’ve accessed Jenkins’s Blue Ocean interface.
 
 Click Run at the top left, then quickly click the OPEN link which appears briefly at the lower-right to see Jenkins running your amended Pipeline project. If you weren’t able to click the OPEN link, click the top row on the Blue Ocean interface to access this feature.
