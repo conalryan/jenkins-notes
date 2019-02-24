@@ -17,6 +17,17 @@ pipeline {
         file(name: "FILE", description: "Choose a file to upload")
     }
     stages {
+        stage('checkout') {
+            checkout([
+                  $class: 'GitSCM', 
+                  branches: [[name: '*/master']], 
+                  browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/conalryan/jenkins'], 
+                  doGenerateSubmoduleConfigurations: false, 
+                  extensions: [], 
+                  submoduleCfg: [], 
+                  userRemoteConfigs: [[credentialsId: 'cr', url: 'https://github.com/conalryan/jenkins.git']]
+            ])
+        }
         stage('env-vars.html') {
           steps {
             echo "BRANCH_NAME: ${env.BRANCH_NAME}"
