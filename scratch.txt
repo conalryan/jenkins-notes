@@ -1,0 +1,7 @@
+stage('Run Bossrnd JBOSS Docker') {
+    steps {
+        sh "docker run -p ${PORT}:8080 dockerhub.rnd.amadeus.net:5000/ahp/hcc/server:${VERSION}""
+    }
+}
+
+sh "docker login -u app-rndsta-hcc2 -p ${env.APP-RNDSTA-HCC2-ARTIFACTORY} dockerhub.rnd.amadeus.net:5000"
