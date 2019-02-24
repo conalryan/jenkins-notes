@@ -5,6 +5,7 @@ pipeline {
             args '-v /root/.m2:/root/.m2' 
         }
     }
+    
     environment {
         CR = credentials('cr')
     }
@@ -27,7 +28,7 @@ pipeline {
             echo "WORKSPACE: ${env.WORKSPACE}"
             echo "GIT_COMMIT: ${env.GIT_COMMIT}"
             echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-            echo "USER_NAME: ${USER_NAME}"
+            echo "CR: ${CR}"
           }
         }
         stage('mvn && docker') { 
