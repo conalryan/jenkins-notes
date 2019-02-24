@@ -18,15 +18,17 @@ pipeline {
     }
     stages {
         stage('checkout') {
-            checkout([
-                  $class: 'GitSCM', 
-                  branches: [[name: '*/master']], 
-                  browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/conalryan/jenkins'], 
-                  doGenerateSubmoduleConfigurations: false, 
-                  extensions: [], 
-                  submoduleCfg: [], 
-                  userRemoteConfigs: [[credentialsId: 'cr', url: 'https://github.com/conalryan/jenkins.git']]
-            ])
+            steps {
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: '*/master']], 
+                    browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/conalryan/jenkins'], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[credentialsId: 'cr', url: 'https://github.com/conalryan/jenkins.git']]
+                ])
+            }
         }
         stage('env-vars.html') {
           steps {
