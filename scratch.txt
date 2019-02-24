@@ -5,3 +5,16 @@ stage('Run Bossrnd JBOSS Docker') {
 }
 
 sh "docker login -u app-rndsta-hcc2 -p ${env.APP-RNDSTA-HCC2-ARTIFACTORY} dockerhub.rnd.amadeus.net:5000"
+
+
+/////
+ > git tag -a -f -m Jenkins Build #3 jenkins-github-conalryan-scm-jenkinsfile-param-3 # timeout=10
+hudson.plugins.git.GitException: Command "git tag -a -f -m Jenkins Build #3 jenkins-github-conalryan-scm-jenkinsfile-param-3" returned status code 128:
+stdout: 
+stderr: 
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
