@@ -12,12 +12,12 @@ pipeline {
         string(name: 'BRANCH', defaultValue: '*/master', description: 'The branch to run the build on.')
     }
     stages {
-        stage('set config') {
+        /*stage('set config') {
             steps {
                 sh  ("git config --global user.email you@example.com")
                 sh  ("git config --global user.name Your Name")
             }
-        }
+        }*/
         stage('checkout') {
             steps {
                 checkout([
@@ -54,6 +54,11 @@ pipeline {
         stage('parameters') {
             steps {
                 echo "params.BRANCH ${params.BRANCH}"
+            }
+        }
+        stage('tagging') {
+            steps {
+                sh 'git tag -l'
             }
         }
     }
