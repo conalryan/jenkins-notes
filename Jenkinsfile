@@ -6,7 +6,7 @@ pipeline {
         }
     }
     environment {
-        USERID-ARTIFACTORY = credentials('userid-artifactory')
+        USER_NAME = credentials('user-name')
     }
     parameters {
         string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
@@ -27,6 +27,7 @@ pipeline {
             echo "WORKSPACE: ${env.WORKSPACE}"
             echo "GIT_COMMIT: ${env.GIT_COMMIT}"
             echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+            echo "USER_NAME: ${USER_NAME}"
           }
         }
         stage('mvn && docker') { 
