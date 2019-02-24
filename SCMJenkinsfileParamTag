@@ -14,8 +14,8 @@ pipeline {
     stages {
         stage('set config') {
             steps {
-                sh  ("git config user.email you@example.com")
-                sh  ("git config user.name Your Name")
+                sh  ("git config --global user.email you@example.com")
+                sh  ("git config --global user.name Your Name")
             }
         }
         stage('checkout') {
