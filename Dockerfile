@@ -2,15 +2,14 @@ FROM ubuntu
 
 USER root
 
+# Tools
 RUN apt-get update \
   && apt-get install -y wget \
   && apt install -y curl
 
-# Java 8 apk
-#RUN apk fetch openjdk8
-#RUN apk add openjdk8
-#RUN java -version
-#RUN echo $JAVA_HOME
+# Install Git
+RUN apt-get install -y git
+RUN git --version
 
 # Java 11 wget
 # https://www.javahelps.com/2015/03/install-oracle-jdk-in-ubuntu.html
@@ -46,15 +45,14 @@ RUN update-alternatives --set mvn /opt/apache-maven-3.2.3/bin/mvn
 
 RUN mvn --version
 
-# Install Git
-RUN apt-get install -y git
-RUN git --version
-
 # Install Node
-#RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt install -y nodejs
+RUN apt-get install -y nodejs
 RUN node -v
 
 # Install NPM
 RUN apt-get install -y npm
 RUN npm -v
+
+# Install Go
+RUN apt-get install -y golang-go
+RUN go version
