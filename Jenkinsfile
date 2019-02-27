@@ -1,5 +1,7 @@
 def awesomeVersion = 'UNKNOWN'
 def commit = ''
+def branch = ''
+
 pipeline {
     agent {
         // docker {
@@ -58,6 +60,7 @@ pipeline {
           steps {
             script {
               awesomeVersion = sh(returnStdout: true, script: 'echo 0.0.1')
+              branch = sh(returnStdout: true, script: 'git branch | sed -n \'/\* /s///p\'')
               commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
             }
           }
@@ -72,7 +75,7 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh ". ${env.WORKSPACE}/test.sh UI"
-                sh "echo ${SET_FROM_SH}"
+                sh "echo ${env.SET_FROM_SH}"
             }
         }
     }
