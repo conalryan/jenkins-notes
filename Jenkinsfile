@@ -52,11 +52,11 @@ pipeline {
           steps {
             BRANCH = """${sh(
               returnStdout: true,
-              script: '$(git branch | sed -n '/\* /s///p')'
+              script: "$(git branch | sed -n '/\* /s///p')"
             )}"""
             COMMIT = """${sh(
               returnStdout: true,
-              script: '$(git rev-parse HEAD)'
+              script: "$(git rev-parse HEAD)"
             )}"""
             sh 'git log -1 --oneline --pretty'
             sh "git tag -a ${params.VERSION} -m \"Jenkinsfile, Build: ${env.BUILD_NUMBER}, Branch: ${BRANCH}\"" ${COMMIT}
