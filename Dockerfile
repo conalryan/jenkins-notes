@@ -9,9 +9,8 @@ RUN apt-get update \
 
 # Install Git
 RUN apt-get install -y git
-RUN git --version
 RUN which git
-RUN echo $PATH
+RUN git --version
 
 # Install Java
 # RUN apt-get install default-jdk
