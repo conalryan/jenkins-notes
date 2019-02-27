@@ -57,11 +57,11 @@ pipeline {
             //   returnStdout: true,
             //   script: '(git branch | sed -n "/\* /s///p")'
             // )}"""
-            COMMIT = """${sh(
-              returnStdout: true,
-              script: '$(git rev-parse HEAD)'
+            CC = """${sh(
+                returnStdout: true,
+                script: 'echo "clang"'
             )}"""
-            sh "echo ${COMMIT}"
+            sh "echo ${CC}"
           }
         }
         stage('tagging') {
