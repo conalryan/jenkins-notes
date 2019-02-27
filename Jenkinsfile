@@ -69,7 +69,7 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh ". ${env.WORKSPACE}/test.sh UI"
-                sh "${SET_FROM_SH}"
+                sh "echo ${SET_FROM_SH}"
             }
         }
     }
