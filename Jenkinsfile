@@ -57,12 +57,14 @@ pipeline {
           steps {
             script {
               awesomeVersion = sh(returnStdout: true, script: 'echo 0.0.1')
+              def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
             }
           }
         }
         stage('Output Dynamic Var') {
           steps {
             echo "awesomeVersion: ${awesomeVersion}"
+            echo "commit: ${commit}"
           }
         }
         stage('tagging') {
