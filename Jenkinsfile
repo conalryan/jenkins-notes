@@ -47,5 +47,11 @@ pipeline {
                 echo "Password: ${params.PASSWORD}"
             }
         }
+        stage('tagging') {
+            steps {
+                sh 'pwd'
+                sh 'test.sh UI'
+            }
+        }
     }
 }
