@@ -30,11 +30,32 @@ echo "Updating $VERSION to $NEW_TAG"
 GIT_COMMIT=`git rev-parse HEAD`
 NEEDS_TAG=`git describe --contains $GIT_COMMIT`
 
-#only tag if no tag already (would be better if the git describe command above could have a silent option)
-if [ -z "$NEEDS_TAG" ]; then
-    echo "Tagged with $NEW_TAG (Ignoring fatal:cannot describe - this means commit is untagged) "
-    git tag $NEW_TAG
-    git push --tags
+
+# #only tag if no tag already (would be better if the git describe command above could have a silent option)
+# if [ -z "$NEEDS_TAG" ]; then
+#     echo "Tagged with $NEW_TAG (Ignoring fatal:cannot describe - this means commit is untagged) "
+#     git tag $NEW_TAG
+#     git push --tags
+# else
+#     echo "Already a tag on this commit"
+# fi
+
+if [ $1 = "UI" ]; then
+  UI_BRANCH_NAME=${BRANCH_NAME}
+  UI_VERSION_BRANCH=${VERSION_BRANCH}
+  UI_VERSION=${VERSION}
+  UI_VERSION_BITS=${VERSION_BITS}
+  UI_NEW_TAG=${NEW_TAG}
+  UI_GIT_COMMIT=${GIT_COMMIT}
+  UI_NEEDS_TAG=${NEEDS_TAG}
+  echo ${UI_BRANCH_NAME}
+  echo ${UI_VERSION_BRANCH}
+  echo ${UI_VERSION}
+  echo ${UI_VERSION_BITS}
+  echo ${UI_NEW_TAG}
+  echo ${UI_GIT_COMMIT}
+  echo ${UI_NEEDS_TAG}
 else
-    echo "Already a tag on this commit"
+  SERVER_BRANCH_NAME="$(git branch | sed -n '/\* /s///p')"
+  echo ${SERVER_BRANCH_NAME}
 fi

@@ -16,6 +16,7 @@ pipeline {
         choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
         password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
         file(name: "FILE", description: "Choose a file to upload")
+        string(name: 'VERSION', defaultValue: '0.0.1', description: 'Da version yo')
     }
     stages {
         stage('env-vars.html') {
@@ -46,6 +47,21 @@ pipeline {
                 echo "Choice: ${params.CHOICE}"
                 echo "Password: ${params.PASSWORD}"
             }
+        }
+        stage('Dyanmic Environment Variables') {
+          steps {
+            BRANCH = """${sh(
+              returnStdout: true,
+              script: '$(git branch | sed -n '/\* /s///p')'
+            )}"""
+            COMMIT = """${sh(
+              returnStdout: true,
+              script: '$(git rev-parse HEAD)'
+            )}"""
+            sh 'git log -1 --oneline --pretty'
+            sh "git tag -a ${params.VERSION} -m \"Jenkinsfile, Build: ${env.BUILD_NUMBER}, Branch: ${BRANCH}\"" ${COMMIT}
+            sh "git push origin ${params.VERSION}"
+          }
         }
         stage('tagging') {
             steps {
