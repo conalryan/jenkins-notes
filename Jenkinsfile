@@ -48,25 +48,25 @@ pipeline {
                 echo "Password: ${params.PASSWORD}"
             }
         }
-        stage('Dyanmic Environment Variables') {
-          steps {
-            BRANCH = """${sh(
-              returnStdout: true,
-              script: '(git branch | sed -n "/\* /s///p")'
-            )}"""
-            COMMIT = """${sh(
-              returnStdout: true,
-              script: '$(git rev-parse HEAD)'
-            )}"""
-            sh 'git log -1 --oneline --pretty'
-            sh "git tag -a ${params.VERSION} -m \"Jenkinsfile, Build: ${env.BUILD_NUMBER}, Branch: ${BRANCH}\"" ${COMMIT}
-            sh "git push origin ${params.VERSION}"
-          }
-        }
+        // stage('Dyanmic Environment Variables') {
+        //   steps {
+        //     BRANCH = """${sh(
+        //       returnStdout: true,
+        //       script: '(git branch | sed -n "/\* /s///p")'
+        //     )}"""
+        //     COMMIT = """${sh(
+        //       returnStdout: true,
+        //       script: '$(git rev-parse HEAD)'
+        //     )}"""
+        //     sh 'git log -1 --oneline --pretty'
+        //     sh "git tag -a ${params.VERSION} -m \"Jenkinsfile, Build: ${env.BUILD_NUMBER}, Branch: ${BRANCH}\"" ${COMMIT}
+        //     sh "git push origin ${params.VERSION}"
+        //   }
+        // }
         stage('tagging') {
             steps {
                 sh 'pwd'
-                sh "${env.WORKSPACE}/test.sh UI"
+                sh "${env.WORKSPACE}/versionbump.sh UI"
             }
         }
     }
