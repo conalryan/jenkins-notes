@@ -66,7 +66,7 @@ pipeline {
         stage('tagging') {
             steps {
                 sh 'pwd'
-                sh "${env.WORKSPACE}/versionbump.sh UI"
+                sh "source ${env.WORKSPACE}/versionbump.sh UI"
             }
         }
     }
