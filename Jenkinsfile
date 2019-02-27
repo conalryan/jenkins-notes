@@ -1,4 +1,4 @@
-def BRANCH = 'UNKNOWN'
+def awesomeVersion = 'UNKNOWN'
 pipeline {
     agent {
         // docker {
@@ -53,13 +53,16 @@ pipeline {
                 echo "Password: ${params.PASSWORD}"
             }
         }
-        stage('Dyanmic Environment Variables') {
+        stage('Dyanmic Var') {
           steps {
-            BRANCH = """${sh(
-              returnStdout: true,
-              script: 'echo 0.0.1'
-            )}"""
-            sh "echo ${awesomeVersion}"
+            script {
+              awesomeVersion = sh(returnStdout: true, script: 'echo 0.0.1')
+            }
+          }
+        }
+        stage('Output Dynamic Var') {
+          steps {
+            echo "awesomeVersion: ${awesomeVersion}"
           }
         }
         stage('tagging') {
