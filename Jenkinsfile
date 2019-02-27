@@ -28,6 +28,7 @@ pipeline {
     }
     stages {
         stage('env-vars.html') {
+          sh script: "echo foo", label: "my step"
           steps {
             echo "BRANCH_NAME: ${env.BRANCH_NAME}"
             echo "CHANGE_ID: ${env.CHANGE_ID}"
