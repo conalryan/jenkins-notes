@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SET_FROM_SHH="Hello"
 echo $SET_FROM_SHH
