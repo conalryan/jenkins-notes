@@ -69,7 +69,7 @@ pipeline {
         stage('tagging') {
             steps {
                 sh 'pwd'
-                sh ". ./${env.WORKSPACE}/test.sh UI"
+                sh ". ${env.WORKSPACE}/test.sh UI"
             }
         }
     }
