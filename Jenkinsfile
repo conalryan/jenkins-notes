@@ -1,4 +1,5 @@
 def awesomeVersion = 'UNKNOWN'
+def commit = ''
 pipeline {
     agent {
         // docker {
@@ -57,7 +58,7 @@ pipeline {
           steps {
             script {
               awesomeVersion = sh(returnStdout: true, script: 'echo 0.0.1')
-              def commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
+              commit = sh(returnStdout: true, script: 'git rev-parse HEAD')
             }
           }
         }
