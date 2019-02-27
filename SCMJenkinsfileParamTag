@@ -53,7 +53,7 @@ pipeline {
         }
         stage('tagging') {
             steps {
-                sh 'git tag -l'
+                sh 'test.sh UI'
             }
         }
     }
