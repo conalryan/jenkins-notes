@@ -52,7 +52,7 @@ pipeline {
           steps {
             BRANCH = """${sh(
               returnStdout: true,
-              script: "(git branch | sed -n '/\* /s///p')"
+              script: '(git branch | sed -n "/\* /s///p")'
             )}"""
             COMMIT = """${sh(
               returnStdout: true,
