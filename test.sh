@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
-SET_FROM_SHH="Hello"
-echo $SET_FROM_SHH
+SET_FROM_SH="Hello"
+echo $SET_FROM_SH
 
 echo $1
 
