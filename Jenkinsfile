@@ -68,6 +68,7 @@ pipeline {
         stage('Output Dynamic Var') {
           steps {
             echo "awesomeVersion: ${awesomeVersion}"
+            echo "branch: ${branch}"
             echo "commit: ${commit}"
           }
         }
@@ -75,7 +76,7 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh ". ${env.WORKSPACE}/test.sh UI"
-                sh "echo ${env.SET_FROM_SH}"
+                sh "echo ${SET_FROM_SH}"
             }
         }
     }
