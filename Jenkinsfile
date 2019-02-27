@@ -1,3 +1,4 @@
+def awesomeVersion = 'UNKNOWN'
 pipeline {
     agent {
         // docker {
@@ -54,9 +55,7 @@ pipeline {
         }
         stage('Dyanmic Environment Variables') {
           steps {
-            environment {
-              awesomeVersion = sh(returnStdout: true, script: 'echo 0.0.1')
-            }
+            awesomeVersion = sh(returnStdout: true, script: 'echo 0.0.1')
             // BRANCH = """${sh(
             //   returnStdout: true,
             //   script: '(git branch | sed -n "/\* /s///p")'
