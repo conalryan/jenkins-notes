@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Ref. to release
 RELEASE=$1

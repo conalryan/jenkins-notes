@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # UI
 GIT_UI_VERSION=$1

@@ -5,10 +5,10 @@
 - Run the jenkinsci/blueocean image as a container in Docker, this command automatically downloads the image if this hasn’t been done or updates the jenkinsci/blueocean Docker image, if an updated one is available.
 ```bash
 docker run \
-  --name jenkins-build \
+  --name jenkins-docker \
   --rm \
   -u root \
-  -p 8080:8080 \
+  -p 8081:8080 \
   -v jenkins-data:/var/jenkins_home \
   -v $(which docker):/usr/bin/docker \
   -v /var/run/docker.sock:/var/run/docker.sock \
@@ -26,7 +26,7 @@ Note:
 ```
 - Map the $HOME directory on the host (i.e. your local) machine (usually the /Users/<your-username> directory) to the /home directory in the container
 ```bash
-docker exec -it jenkins-build bash
+docker exec -it jenkins-docker bash
 ```
 - Access Jenkins/Blue Ocean Docker container through terminal using docker exec commands add --name flag
 
